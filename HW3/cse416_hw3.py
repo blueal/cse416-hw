@@ -45,12 +45,12 @@ validation_data, test_data = train_test_split(test_data, test_size=0.5)
 
 # Q1: Majority class classifier
 # TODO
-
 majority_label = train_data["sentiment"].mode()[0]
 number_majority = sum(validation_data["sentiment"] == majority_label)
 total = validation_data["sentiment"].count()
 
 majority_classifier_validation_accuracy = number_majority/total
+
 
 # Train a sentiment model
 features = vectorizer.get_feature_names()
@@ -59,7 +59,7 @@ sentiment_model.fit(train_data[features], train_data['sentiment'])
 
 # Q2: Compute most positive/negative
 # TODO
-
+coefficients = sentiment_model.coef_[0] 
 max_min_dict = {"max" : {"word" : features[coefficients.argmax()],
  "index" : coefficients.argmax(),
  "value" : coefficients.max()},
@@ -73,7 +73,6 @@ most_positive_word = max_min_dict["max"]["word"]
 # Q3: Most positive/negative review
 # TODO
 
-
 sentiment_validation_prob = sentiment_model.predict_proba(validation_data[features])
 
 most_positive_review = validation_data.iloc[sentiment_validation_prob[:,1].argmax()]["review_clean"]
@@ -81,12 +80,11 @@ most_negative_review = validation_data.iloc[sentiment_validation_prob[:,0].argma
 
 # Q4: Sentiment model validation accuracy 
 # TODO
-
-
+from sklearn.metrics import accuracy_score
 y_true = validation_data["sentiment"]
 y_pred = sentiment_model.predict(validation_data[features])
 
-sentiment_model_validation_accuracy = accuracy_score(y_true, y_pred , normalize=True)
+sentiment_model_validation_accuracy = accuracy_score(y_true, y_pred)
 
 # Q5: Confusion matrix
 # TODO
@@ -95,7 +93,6 @@ from sklearn.metrics import confusion_matrix
 tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
 
 # Q6 and Q7
-
 
 # Set up the regularization penalities to try
 l2_penalties = [0.01, 1, 4, 10, 1e2, 1e3, 1e5]
@@ -112,11 +109,16 @@ train_accuracy = []
 validation_accuracy = []
 
 for l2_penalty, l2_penalty_column_name in zip(l2_penalties, l2_penalty_names):
-    # TODO(Q6 and Q7): Train the model 
+    # (Q6 and Q7): Train the model 
+    # TODO
     model = LogisticRegression(fit_intercept = False, C = 1/l2_penalty).fit(train_data[features], train_data["sentiment"])
-    # TODO(Q6): Save the coefficients in coef_table
+    
+    # (Q6): Save the coefficients in coef_table
+    # TODO
     coef_table[l2_penalty_column_name] = model.coef_[0]
-    # TODO(Q7): Calculate and save the train and validation accuracies
+
+    # (Q7): Calculate and save the train and validation accuracies
+    # TODO
     l2_penalty_list1.append(l2_penalty)
     y_train_true = train_data["sentiment"]
     y_train_pred = model.predict(train_data[features])
@@ -127,10 +129,12 @@ for l2_penalty, l2_penalty_column_name in zip(l2_penalties, l2_penalty_names):
 
 accuracy_data = {'l2_penalty': l2_penalty_list1, 'train_accuracy': train_accuracy, 'validation_accuracy': validation_accuracy} 
 
+
 accuracies_table = pd.DataFrame(accuracy_data)
 
 # Q8 
 # TODO
+
 
 positive_words = coef_table.nlargest(5, "coefficients [L2=1e+00]")["word"]
 negative_words = coef_table.nsmallest(5, "coefficients [L2=1e+00]")["word"]
