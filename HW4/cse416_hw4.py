@@ -112,6 +112,12 @@ class RandomForest416:
         """
         # Q7
         # TODO
+        for i, tree in enumerate(self._trees):
+            index = np.random.randint(0, len(X), size=len(X))
+            X_rand_sample = X.iloc[index]
+            y_rand_sample = y.iloc[index]
+
+            tree.fit(X_rand_sample, y_rand_sample)
 
     def predict(self, X):
         """
@@ -133,6 +139,9 @@ class RandomForest416:
 
 # Q7
 # TODO
+from sklearn.metrics import accuracy_score
+rf_tst=RandomForest416(2)
+rf_tst.fit(train_data[features], train_data[target])
 
-rf_train_accuracy = None
-rf_validation_accuracy = None
+rf_train_accuracy = accuracy_score(rf_tst.predict(train_data[features]), train_data[target])
+rf_validation_accuracy = accuracy_score(rf_tst.predict(validation_data[features]), validation_data[target])
